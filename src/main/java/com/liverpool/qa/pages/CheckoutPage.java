@@ -1,0 +1,22 @@
+package com.liverpool.qa.pages;
+
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+/** El flujo se detiene aquí: NO se completa el pago ni se hacen compras reales. */
+public class CheckoutPage extends BasePage {
+
+    public CheckoutPage(WebDriver driver) {
+        super(driver);
+    }
+
+    public boolean isLoaded() {
+        try {
+            wait.until(ExpectedConditions.urlMatches("(?i).*(checkout|shipping|payment|delivery|envio|pago).*"));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Liverpool QA Automation" verbose="1">
+    <listeners>
+        <listener class-name="com.liverpool.qa.listeners.TestListener"/>
+    </listeners>
+
+    <test name="Sin sesion (guest)">
+        <classes>
+            <class name="com.liverpool.qa.tests.GuestNegativeTests"/>
+        </classes>
+    </test>
+
+    <test name="Con sesion iniciada">
+        <classes>
+            <class name="com.liverpool.qa.tests.ShoppingFlowTests"/>
+            <class name="com.liverpool.qa.tests.CartNegativeTests"/>
+            <class name="com.liverpool.qa.tests.EdgeCaseTests"/>
+        </classes>
+    </test>
+</suite>

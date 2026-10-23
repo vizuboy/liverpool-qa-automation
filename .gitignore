@@ -1,0 +1,9 @@
+target/
+.idea/
+*.iml
+.vscode/
+.env
+*.log
+cookies*.json
+*.cookies.json
+docs/GUION_VIDEO.md
