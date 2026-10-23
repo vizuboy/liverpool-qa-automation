@@ -15,27 +15,23 @@ import java.time.Duration;
 import java.util.List;
 
 public class ProductDetailPage extends BasePage {
-
     private static final By TITLE = By.cssSelector("h1");
     private static final By ADD_TO_BAG = By.xpath("//button[contains(" + lc("normalize-space(.)")
             + ", 'agregar') and contains(" + lc("normalize-space(.)") + ", 'bolsa')]");
     private static final By ADDED_CONFIRMATION = textContainingAny(
             "agregado", "ver bolsa", "ir a la bolsa", "ir a mi bolsa");
 
-    /** Selector de talla que abre un panel lateral ("Tamaño: Selecciona una opción"). */
     private static final By SIZE_PICKER = By.xpath("//button[starts-with(@data-testid, "
             + "'selection-button-simple-picker-')][contains(" + lc("normalize-space(.)") + ", 'tama') or contains("
             + lc("normalize-space(.)") + ", 'talla')]");
-    /** Panel lateral donde el selector anterior despliega las opciones. */
+
     private static final By SIZE_DRAWER = By.cssSelector(
             "[class*='MuiDrawer-root' i], [role='listbox'], [role='menu']");
 
-    /** Pop-up que puede pedir la talla después de presionar "Agregar". */
     private static final By DIALOG_CONFIRM = By.xpath(".//button[contains(" + lc("normalize-space(.)")
             + ", 'agregar') or contains(" + lc("normalize-space(.)") + ", 'continuar') or contains("
             + lc("normalize-space(.)") + ", 'aceptar') or contains(" + lc("normalize-space(.)") + ", 'listo')]");
 
-    /** Botón para rechazar la oferta de garantía/protección (o cerrar el pop-up). VALIDAR textos. */
     private static final By DECLINE_WARRANTY = By.xpath(".//*[self::button or self::a]["
             + "starts-with(" + lc("normalize-space(.)") + ", 'no ') or starts-with(" + lc("normalize-space(.)")
             + ", 'no,') or contains(" + lc("normalize-space(.)") + ", 'sin garant') or contains("
@@ -43,14 +39,6 @@ public class ProductDetailPage extends BasePage {
             + ", 'omitir') or contains(" + lc("normalize-space(.)") + ", 'ahora no') or normalize-space(.)='close'"
             + " or contains(" + lc("@aria-label") + ", 'cerrar')]");
 
-    /**
-     * Busca opciones de talla/variante por POSICIÓN y TEXTO, sin depender de la etiqueta HTML:
-     * elementos hoja cuyo texto parece una talla (26, 27.5, XS..XXL, Única, 100 ml...), visibles,
-     * no deshabilitados/agotados y que no sean el contador de cantidad.
-     * - Sin scope: solo los que están entre el título (h1) y el botón de agregar, en su misma columna.
-     * - Con scope (un pop-up): cualquiera dentro del pop-up.
-     * Devuelve [candidatos, textosVistos] (los textos se usan para diagnosticar si no hay candidatos).
-     */
     private static final String FIND_SIZES_JS = """
             const scope = arguments[0], h1 = arguments[1], btn = arguments[2];
             const re = /^(\\d{1,2}([.,]\\d)?(\\s?(mx|mex|cm|us|eu))?|\\d{1,4}\\s?(ml|g|gb|tb)|xxs|xs|s|m|l|xl|xxl|xxxl|ch|mg|gd|[úu]nic[ao]|uni|unitalla)$/i;
@@ -100,7 +88,6 @@ public class ProductDetailPage extends BasePage {
         return isPresent(ADD_TO_BAG, 5) && driver.findElement(ADD_TO_BAG).isEnabled();
     }
 
-    /** Selecciona la primera talla/variante real y disponible de la página. false si no hay ninguna. */
     public boolean selectFirstAvailableOption() {
         WebElement picker = findVisibleSizePicker(2);
         if (picker != null) {
@@ -124,7 +111,6 @@ public class ProductDetailPage extends BasePage {
         return text.contains("selecciona") || text.contains("elige");
     }
 
-    /** Selector de talla visible (p. ej. "Tamaño: Selecciona una opción"). */
     private WebElement findVisibleSizePicker(int seconds) {
         ExpectedCondition<WebElement> picker = d -> d.findElements(SIZE_PICKER).stream()
                 .filter(BasePage::safeIsDisplayed).findFirst().orElse(null);
@@ -135,7 +121,6 @@ public class ProductDetailPage extends BasePage {
         }
     }
 
-    /** Panel lateral con las opciones de talla (o null si no se abrió). */
     private WebElement findVisibleSizeDrawer(int seconds) {
         ExpectedCondition<WebElement> drawer = d -> d.findElements(SIZE_DRAWER).stream()
                 .filter(BasePage::safeIsDisplayed).findFirst().orElse(null);
@@ -151,7 +136,6 @@ public class ProductDetailPage extends BasePage {
             new WebDriverWait(driver, Duration.ofSeconds(3))
                     .until(ExpectedConditions.invisibilityOfElementLocated(SIZE_DRAWER));
         } catch (TimeoutException ignored) {
-            // se cierra solo; si no, el click de agregar reintenta tras cerrar overlays
         }
     }
 
@@ -172,7 +156,6 @@ public class ProductDetailPage extends BasePage {
                 System.out.println("Talla seleccionada: " + text);
                 return true;
             } catch (StaleElementReferenceException ignored) {
-                // el DOM se re-renderizó; siguiente candidato
             }
         }
         System.out.println("Sin talla/variante que elegir (" + (scope == null ? "página" : "pop-up")
@@ -180,7 +163,6 @@ public class ProductDetailPage extends BasePage {
         return false;
     }
 
-    /** Si tras presionar "Agregar" aparece un pop-up pidiendo talla, la elige y confirma. */
     private void chooseSizeInDialogIfAsked() {
         try {
             WebElement dialog = findVisibleDialog(3);
@@ -196,11 +178,9 @@ public class ProductDetailPage extends BasePage {
                 }
             }
         } catch (WebDriverException noDialog) {
-            // no apareció pop-up
         }
     }
 
-    /** Primer diálogo/pop-up visible (o null si no aparece en el tiempo dado). */
     private WebElement findVisibleDialog(int seconds) {
         ExpectedCondition<WebElement> visibleDialog = d -> d.findElements(DIALOG).stream()
                 .filter(BasePage::safeIsDisplayed).findFirst().orElse(null);
@@ -216,7 +196,6 @@ public class ProductDetailPage extends BasePage {
         return t.contains("garant") || t.contains("protecci") || t.contains("extendid");
     }
 
-    /** Espera una capa (diálogo por clase o capa fija) cuyo texto hable de garantía/protección. */
     private WebElement findWarrantyLayer(int seconds) {
         ExpectedCondition<WebElement> warranty = d -> {
             try {
@@ -230,7 +209,6 @@ public class ProductDetailPage extends BasePage {
                     return (WebElement) layer;
                 }
             } catch (StaleElementReferenceException ignored) {
-                // se re-dibujó mientras se evaluaba; el siguiente intento lo resuelve
             }
             return null;
         };
@@ -241,7 +219,6 @@ public class ProductDetailPage extends BasePage {
         }
     }
 
-    /** Si tras agregar aparece una oferta de garantía/protección (p. ej. Xbox), la rechaza. */
     private void declineWarrantyIfOffered() {
         try {
             WebElement layer = findWarrantyLayer(3);
@@ -265,11 +242,9 @@ public class ProductDetailPage extends BasePage {
             System.err.println("Apareció una oferta de garantía pero no se encontró cómo rechazarla. Botones: "
                     + buttons);
         } catch (WebDriverException ignored) {
-            // el pop-up se cerró solo o se re-renderizó
         }
     }
 
-    /** Agrega a la bolsa. Devuelve true si apareció la confirmación (la verdad final se valida en CartPage). */
     public boolean addToBag() {
         boolean selected = selectFirstAvailableOption();
         click(ADD_TO_BAG);
@@ -280,7 +255,6 @@ public class ProductDetailPage extends BasePage {
         return isPresent(ADDED_CONFIRMATION, 8);
     }
 
-    /** Caso negativo: intenta agregar SIN elegir talla/variante. */
     public void clickAddToBagWithoutSelectingOptions() {
         click(ADD_TO_BAG);
     }

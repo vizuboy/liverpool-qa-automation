@@ -9,9 +9,7 @@ import org.testng.annotations.Test;
 
 import java.util.Optional;
 
-/** Casos NEGATIVOS sobre la bolsa (requieren sesión). */
 public class CartNegativeTests extends LoggedInBaseTest {
-
     @Test(description = "NEG-03: no se puede agregar zapatos sin elegir talla")
     public void cannotAddShoesWithoutSelectingSize() {
         CartPage cart = new CartPage(driver);
@@ -20,7 +18,7 @@ public class CartNegativeTests extends LoggedInBaseTest {
         Optional<String> url = new ShoppingFlow(driver).findFirstAvailableProductUrl(Category.BOTAS);
         Assert.assertTrue(url.isPresent(), "Precondición: se necesita unas botas disponibles");
 
-        new ProductDetailPage(driver).clickAddToBagWithoutSelectingOptions();   // sin talla
+        new ProductDetailPage(driver).clickAddToBagWithoutSelectingOptions();   
 
         cart.open();
         Assert.assertEquals(cart.itemCount(), 0,

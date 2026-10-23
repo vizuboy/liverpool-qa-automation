@@ -12,9 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/** Toma una captura de pantalla cuando un test falla (target/screenshots). */
 public class TestListener implements ITestListener {
-
     @Override
     public void onTestFailure(ITestResult result) {
         WebDriver driver = DriverFactory.get();

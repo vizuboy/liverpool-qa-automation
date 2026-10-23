@@ -8,12 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.util.Optional;
 
-/**
- * Flujos de negocio reutilizables entre tests. No contiene aserciones:
- * devuelve resultados y los tests deciden qué validar.
- */
 public class ShoppingFlow {
-
     private static final int MAX_CANDIDATES = 5;
 
     private final WebDriver driver;
@@ -22,10 +17,6 @@ public class ShoppingFlow {
         this.driver = driver;
     }
 
-    /**
-     * Navega a la categoría y deja el navegador en el primer producto que se pueda agregar a la bolsa
-     * (los primeros resultados pueden estar agotados). Devuelve su URL.
-     */
     public Optional<String> findFirstAvailableProductUrl(Category category) {
         ProductListPage list = new HomePage(driver).goToCategory(category);
         for (String url : list.productUrls(MAX_CANDIDATES)) {
@@ -37,7 +28,6 @@ public class ShoppingFlow {
         return Optional.empty();
     }
 
-    /** Navega, elige el primer producto disponible y lo agrega a la bolsa. Devuelve el título del producto. */
     public Optional<String> addFirstAvailableProductOf(Category category) {
         if (findFirstAvailableProductUrl(category).isEmpty()) {
             return Optional.empty();

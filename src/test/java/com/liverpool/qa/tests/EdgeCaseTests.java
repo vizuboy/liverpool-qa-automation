@@ -11,9 +11,7 @@ import org.testng.annotations.Test;
 
 import java.util.Optional;
 
-/** EDGE CASES: entradas límite y comportamientos de estado. */
 public class EdgeCaseTests extends LoggedInBaseTest {
-
     @Test(description = "EDGE-01: búsqueda vacía no rompe el sitio")
     public void emptySearchDoesNotBreakSite() {
         HomePage home = new HomePage(driver).open();
@@ -32,7 +30,6 @@ public class EdgeCaseTests extends LoggedInBaseTest {
             driver.switchTo().alert();
             Assert.fail("Se ejecutó un alert: posible XSS reflejado en la búsqueda");
         } catch (NoAlertPresentException expected) {
-            // correcto: no hay alert
         }
         Assert.assertFalse(home.looksLikeErrorPage(), "Los caracteres especiales produjeron una página de error");
     }

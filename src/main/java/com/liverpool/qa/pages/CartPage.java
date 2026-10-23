@@ -17,11 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CartPage extends BasePage {
-
-    /** Cada línea de la bolsa tiene su botón con data-testid="delete-button-<uuid>" (uuid único por línea). */
     private static final By REMOVE_BUTTON = By.cssSelector("[data-testid^='delete-button-']");
 
-    /** Botón de confirmación dentro de un diálogo ("¿Eliminar producto?"). VALIDAR. */
     private static final By CONFIRM_BUTTON = By.xpath(".//button[contains(" + lc("normalize-space(.)")
             + ", 'eliminar') or contains(" + lc("normalize-space(.)") + ", 'confirmar') or "
             + lc("normalize-space(.)") + "='sí' or " + lc("normalize-space(.)") + "='si' or contains("
@@ -30,13 +27,12 @@ public class CartPage extends BasePage {
     private static final By EMPTY_MESSAGE = textContainingAny(
             "no hay artículos en la bolsa", "no hay articulos en la bolsa",
             "bolsa está vacía", "bolsa esta vacia", "no tienes productos", "bolsa vacía");
-    /** Contenedor que el sitio muestra solo cuando la bolsa está vacía. */
+
     private static final By EMPTY_BAG_TEMPLATE = By.cssSelector("[data-testid='template-empty-bag']");
 
-    /** VALIDAR: texto exacto del botón de la bolsa ("Ir a comprar", "Comprar ahora", "Ir a pagar"...). */
     private static final String[] BUY_NOW_TEXTS = {
             "ir a comprar", "comprar ahora", "ir a pagar", "continuar compra", "continuar con la compra"};
-    /** "continuar compra" debe ser exacto: con contains también coincide con "Continuar comprando". */
+
     private static final String[] BUY_NOW_EXACT_TEXTS = {"continuar compra"};
     private static final By BUY_NOW = buyNowLocator();
 
@@ -80,7 +76,6 @@ public class CartPage extends BasePage {
         return displayedRemoveButtons().size();
     }
 
-    /** Nombre (truncado) del producto de cada línea de la bolsa: para diagnosticar qué falta o sobra. */
     public List<String> itemSummaries() {
         List<String> summaries = new ArrayList<>();
         for (WebElement remove : displayedRemoveButtons()) {
@@ -112,13 +107,6 @@ public class CartPage extends BasePage {
         return new CheckoutPage(driver);
     }
 
-    /**
-     * Deja la bolsa vacía (el estado de la bolsa vive en la cuenta, no en el navegador).
-     * ATENCIÓN: elimina los productos que la cuenta tuviera en la bolsa. Usa una cuenta de pruebas.
-     *
-     * Cada eliminación se da por buena cuando desaparece ESE botón (por su data-testid único), sin comparar
-     * conteos: la lista se carga y se re-dibuja mientras se borra, y el total puede subir o bajar.
-     */
     public void clearBag() {
         open();
         for (int i = 0; i < 40; i++) {
@@ -144,19 +132,12 @@ public class CartPage extends BasePage {
         throw new IllegalStateException("No se logró vaciar la bolsa tras 40 intentos. Quedan: " + itemSummaries());
     }
 
-    // ---------------------------------------------------------------- helpers
-
     private List<WebElement> displayedRemoveButtons() {
         return driver.findElements(REMOVE_BUTTON).stream()
                 .filter(BasePage::safeIsDisplayed)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Hace clic en el primer botón de eliminar visible y devuelve su data-testid (null si ya no hay).
-     * La bolsa se re-dibuja tras cada cambio, así que el elemento puede volverse obsoleto: se vuelve a
-     * buscar en cada intento en lugar de reutilizarlo.
-     */
     private String clickFirstRemoveButton() {
         for (int attempt = 0; attempt < 5; attempt++) {
             try {
@@ -170,13 +151,11 @@ public class CartPage extends BasePage {
                 safeClick(target);
                 return lineId;
             } catch (StaleElementReferenceException reRendered) {
-                // la bolsa se re-dibujó: reintentar con un elemento nuevo
             }
         }
         throw new IllegalStateException("La bolsa se siguió re-dibujando y no se pudo hacer clic en eliminar");
     }
 
-    /** Diálogos por clase + capa detectada por comportamiento. */
     private List<WebElement> currentLayers(WebDriver d) {
         List<WebElement> layers = new ArrayList<>();
         for (WebElement dialog : d.findElements(DIALOG)) {
@@ -191,7 +170,6 @@ public class CartPage extends BasePage {
         return layers;
     }
 
-    /** Si tras eliminar se pide confirmación ("¿Eliminar producto?"), la acepta. No espera más de 2 s. */
     private void confirmRemovalIfAsked() {
         ExpectedCondition<Boolean> confirmed = d -> {
             for (WebElement layer : currentLayers(d)) {
@@ -211,11 +189,9 @@ public class CartPage extends BasePage {
                     .ignoring(StaleElementReferenceException.class)
                     .until(confirmed);
         } catch (WebDriverException noConfirmation) {
-            // no hubo diálogo de confirmación
         }
     }
 
-    /** Texto y botones de las capas abiertas: para diagnosticar sin abrir DevTools. */
     private String describeLayers() {
         StringBuilder sb = new StringBuilder();
         try {
@@ -235,7 +211,6 @@ public class CartPage extends BasePage {
         return sb.length() == 0 ? "(ninguna)" : sb.toString();
     }
 
-    /** Textos de los botones visibles: para diagnosticar el locator sin abrir DevTools. */
     private List<String> visibleButtonTexts() {
         return driver.findElements(By.cssSelector("button, a[role='button']")).stream()
                 .filter(BasePage::safeIsDisplayed)

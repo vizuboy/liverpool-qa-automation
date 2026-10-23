@@ -15,23 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 
-/**
- * Inyecta en el navegador las cookies de una sesión ya iniciada.
- *
- * Formato esperado: arreglo JSON de objetos con al menos "name" y "value"; opcionales
- * "domain", "path", "secure", "httpOnly" y la expiración como "expiry" o "expirationDate"
- * (segundos epoch). Es el formato que exportan extensiones como Cookie-Editor.
- *
- * Importante: el navegador solo acepta cookies del dominio de la página actual, por eso
- * primero se abre el sitio, luego se agregan las cookies y por último se recarga.
- */
 public final class SessionCookies {
-
     private SessionCookies() {}
 
-    /** Devuelve cuántas cookies se pudieron agregar. */
     public static int apply(WebDriver driver) {
-        driver.get(Config.BASE_URL);                       // 1. dominio correcto
+        driver.get(Config.BASE_URL);                       
         int added = 0;
         for (JsonElement element : load()) {
             try {
@@ -41,7 +29,7 @@ public final class SessionCookies {
                 System.err.println("Cookie omitida: " + e.getMessage());
             }
         }
-        driver.navigate().refresh();                       // 3. el sitio ya ve la sesión
+        driver.navigate().refresh();                       
         return added;
     }
 

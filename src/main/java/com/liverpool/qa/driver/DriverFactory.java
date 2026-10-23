@@ -7,13 +7,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
-/**
- * Crea y expone el WebDriver (uno por hilo). Selenium Manager (incluido en Selenium 4.6+)
- * descarga el chromedriver correcto automáticamente.
- * No se usa implicit wait a propósito: solo waits explícitos (no mezclar ambos).
- */
 public final class DriverFactory {
-
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
     private DriverFactory() {}

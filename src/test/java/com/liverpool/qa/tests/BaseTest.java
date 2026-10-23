@@ -5,9 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-/** Abre un navegador por clase de test y lo cierra al terminar. */
 public abstract class BaseTest {
-
     protected WebDriver driver;
 
     @BeforeClass(alwaysRun = true)

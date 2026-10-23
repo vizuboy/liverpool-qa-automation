@@ -8,13 +8,7 @@ import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 
-/**
- * Precondición del examen: "con una sesión iniciada".
- * Prioridad: 1) cookies de una sesión existente (COOKIES_FILE / COOKIES_JSON),
- *            2) login con LIVERPOOL_USER / LIVERPOOL_PASSWORD.
- */
 public abstract class LoggedInBaseTest extends BaseTest {
-
     @BeforeClass(alwaysRun = true, dependsOnMethods = "setUp")
     public void startSession() {
         if (Config.hasCookies()) {

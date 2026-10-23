@@ -6,9 +6,7 @@ import com.liverpool.qa.pages.ProductListPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Casos NEGATIVOS que no requieren sesión (se ejecutan con un navegador limpio). */
 public class GuestNegativeTests extends BaseTest {
-
     @Test(description = "NEG-01: login con credenciales inválidas muestra error y no inicia sesión")
     public void invalidCredentialsAreRejected() {
         LoginPage login = new LoginPage(driver);

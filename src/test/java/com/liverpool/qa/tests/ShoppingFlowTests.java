@@ -15,9 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-/** Casos FUNCIONALES: el flujo que pide el examen. */
 public class ShoppingFlowTests extends LoggedInBaseTest {
-
     @DataProvider(name = "categories")
     public Object[][] categories() {
         Category[] all = Category.values();
@@ -40,7 +38,7 @@ public class ShoppingFlowTests extends LoggedInBaseTest {
     @Test(description = "FUNC-02: agrega los 6 productos a la bolsa e ir a comprar ahora llega al checkout")
     public void addsAllProductsToBagAndGoesToCheckout() {
         CartPage cart = new CartPage(driver);
-        cart.clearBag();                                    // precondición: bolsa limpia
+        cart.clearBag();                                    
 
         ShoppingFlow flow = new ShoppingFlow(driver);
         List<String> addedTitles = new ArrayList<>();
@@ -62,6 +60,5 @@ public class ShoppingFlowTests extends LoggedInBaseTest {
         CheckoutPage checkout = cart.clickBuyNow();
         Assert.assertTrue(checkout.isLoaded(),
                 "'Ir a comprar ahora' no llevó al checkout. URL actual: " + driver.getCurrentUrl());
-        // El flujo se detiene aquí a propósito: no se paga ni se generan pedidos reales.
     }
 }

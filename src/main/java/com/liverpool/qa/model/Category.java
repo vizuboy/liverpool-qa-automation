@@ -1,10 +1,5 @@
 package com.liverpool.qa.model;
 
-/**
- * Los 6 productos del flujo del examen.
- * menuPath: ruta de navegación por menú (vacía = se busca directo por término).
- * searchTerm: término de respaldo para la búsqueda del sitio.
- */
 public enum Category {
     BOTAS("Botas de hombre", "botas hombre", "Zapatos de hombre", "Botas"),
     MOCASINES("Mocasines de hombre", "mocasines hombre", "Zapatos de hombre", "Mocasines"),
